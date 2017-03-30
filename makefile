@@ -1,13 +1,14 @@
 .PHONY:clean all
-SRC = $(wildcard *.cpp)
+SRC = $(wildcard xsserver/*.cpp)
+HEAD = $(wildcard xsserver/HeaderFiles/*.h)
+SRC1 = $(wildcard xsserver/SourceFiles/*.cpp)
 BIN = $(SRC:%.cpp=%)
 
 all:$(BIN)
 
-$(BIN):%:%.cpp
+$(BIN):%:%.cpp $(SRC1)
 	g++ $(CFLAGS) -std=c++11 $^ -o$@
 
-CC=gcc
 CFLAGS=-g -Wall
 
 
