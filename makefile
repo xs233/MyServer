@@ -6,7 +6,7 @@ BIN = $(SRC:%.cpp=%)
 
 all:$(BIN)
 
-$(BIN):%:%.cpp
+$(BIN):%:%.cpp $(SRC1)
 	g++ $(CFLAGS) -std=c++11 $^ -o$@
 
 CFLAGS=-g -Wall

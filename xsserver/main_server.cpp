@@ -1,4 +1,5 @@
 #include "HeaderFiles/epoll.h"
+//class CEpoll;
 
 int main()
 {
