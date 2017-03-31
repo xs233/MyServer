@@ -71,10 +71,15 @@ bool CMyEpoll::myepoll_process()
 			perror("epoll_wait failed");
 			close(m_nfd);
 			return false;
-		} else
-		{
-
+		} else{
+			
 		}
 	}
+	return true;
+}
+
+bool CMyEpoll::myepoll_work(int nCnt)
+{
+	
 	return true;
 }
