@@ -9,11 +9,15 @@ class CMyEpoll
 	int m_nfd;	
 	int m_nepfd;
 	epoll_event m_evs[CONN_MAX];
+	
+	bool myepoll_work();
+
 public:
 	CMyEpoll();
 	~CMyEpoll();
 	bool myepoll_init();
 	bool myepoll_process();
+	
 };
 
 #endif
