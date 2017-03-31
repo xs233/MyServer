@@ -1,9 +1,9 @@
 #include "HeaderFiles/epoll.h"
-//class CEpoll;
+//class CMyEpoll;
 
 int main()
 {
-	CEpoll AAA;
-	AAA.epoll_init();
+	CMyEpoll AAA;
+	AAA.myepoll_init();
 	return 0;
 }
