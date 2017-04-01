@@ -21,13 +21,10 @@ int main()
 	printf("AAA\n"); */
 	//dup2(nFFD,STDERR_FILENO);
 
-	printf("aa\n");
-	fflush(stdout);
-	FILE* fp = freopen("myserver.log","wb",stdout);
-	printf("bb\n");
+	//FILE* fp = freopen("myserver.log","wb",stdout);
 	CMyEpoll AAA;
 	AAA.myepoll_init();
-	//AAA.myepoll_process();
-	fclose(fp);
+	AAA.myepoll_process();
+	//fclose(fp);
 	return 0;
 }
