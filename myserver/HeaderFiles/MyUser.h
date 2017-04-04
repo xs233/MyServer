@@ -1,18 +1,18 @@
 #ifndef __CMYUSER_H__
 #define __CMYUSER_H__
 #include<arpa/inet.h>
+#include<map>
 
 class CMyUser
 {
-	int m_nuserfd;
-	sockaddr_in* m_pAddr;
+	std::map<int,sockaddr_in> m_mapuser;		
 
 public:
 	CMyUser();
-	CMyUser(int nfd,sockaddr_in* pAddr);
-	CMyUser(const CMyUser& myuser);
 	~CMyUser();
-	sockaddr_in* GetSockaddr();
+	bool insert(int,sockaddr_in);
+	bool erase(int);
+	bool data_process(int,char*);
 };
 
 #endif

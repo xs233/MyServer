@@ -17,8 +17,8 @@ int main()
 		close(nFFD);
 		return -1;
 	}
-	write(STDOUT_FILENO,"BBB\n",5);
-	printf("AAA\n"); */
+	write(STDOUT_FILENO,"BBB\n",5);*/
+	//printf("AAA\n");
 	//dup2(nFFD,STDERR_FILENO);
 
 	//FILE* fp = freopen("myserver.log","wb",stdout);

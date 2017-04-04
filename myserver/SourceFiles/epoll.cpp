@@ -7,14 +7,18 @@
 #include"../HeaderFiles/epoll.h"
 #include"../HeaderFiles/MyUser.h"
 
-CMyEpoll::CMyEpoll() : m_nfd(0),m_nepfd(0)
+CMyEpoll::CMyEpoll() : m_nfd(0),m_nepfd(0),pMyUser(new CMyUser())
 {
 	memset(m_evs,'\0',CONN_MAX * sizeof(epoll_event));
 }
 
 CMyEpoll::~CMyEpoll()
 {
-	 m_mapuser.clear();
+	if (pMyUser)
+	{
+		delete pMyUser;
+		pMyUser = nullptr;
+	}
 }
 
 bool CMyEpoll::myepoll_init()
@@ -43,7 +47,6 @@ bool CMyEpoll::myepoll_init()
 		perror("Listen failed");
 		return false;
 	}
-	printf("test\n");
 	return true;
 }
 
@@ -103,7 +106,7 @@ bool CMyEpoll::myepoll_work(int nCnt)
 				ev.events = EPOLLIN;
 				ev.data.fd = nUserFd;
 				epoll_ctl(m_nepfd,EPOLL_CTL_ADD,nUserFd,&ev);
-				m_mapuser.insert(std::make_pair(nUserFd,CMyUser(nUserFd,&useraddr)));
+				pMyUser->insert(nUserFd,useraddr);
 				printf("New User from %s:%d\n",inet_ntoa(useraddr.sin_addr),ntohs(useraddr.sin_port));
 				write(nUserFd,"welcome",7);
 			}
@@ -120,25 +123,12 @@ bool CMyEpoll::myepoll_work(int nCnt)
 			}
 			else if (0 == nRet)
 			{
-				std::map<int,CMyUser>::iterator it = m_mapuser.find(m_evs[i].data.fd);
-				if (m_mapuser.end() == it)
-				{
-					perror("unknown error and lost fd!");
-					continue;
-				}
-				printf("[%s:%d] Disconnect...\n",inet_ntoa((it->second).GetSockaddr()->sin_addr),ntohs((it->second).GetSockaddr()->sin_port));
+				pMyUser->erase(m_evs[i].data.fd);
 				epoll_ctl(m_nepfd,EPOLL_CTL_DEL,m_evs[i].data.fd,m_evs + i);
-				m_mapuser.erase(it);
 			}
 			else
 			{
-				std::map<int,CMyUser>::iterator it = m_mapuser.find(m_evs[i].data.fd);
-				if (m_mapuser.end() == it)
-				{
-					perror("unknown error and lost fd!");
-					continue;
-				}
-				printf("Recv from [%s:%d] : %s\n",inet_ntoa((it->second).GetSockaddr()->sin_addr),ntohs((it->second).GetSockaddr()->sin_port),szRecvBuf);
+				pMyUser->data_process(m_evs[i].data.fd,szRecvBuf);
 			}
 		}
 	}

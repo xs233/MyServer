@@ -1,7 +1,6 @@
 #ifndef __CEPOLL_H__
 #define __CEPOLL_H__
 #include<sys/epoll.h>
-#include<map>
 
 class CMyUser;
 
@@ -12,7 +11,7 @@ class CMyEpoll
 	int m_nfd;	
 	int m_nepfd;
 	epoll_event m_evs[CONN_MAX];
-	std::map<int,CMyUser> m_mapuser;
+	CMyUser* pMyUser;	
 
 	bool myepoll_work(int nCnt);
 
