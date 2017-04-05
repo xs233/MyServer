@@ -10,8 +10,8 @@
 
 typedef struct tagMsg {
 	long mtype;
-	char* mtext;	
-}msgbuf;
+	char szBuf[100];	
+}mymsgbuf;
 
 int init_msg()
 {
@@ -35,11 +35,10 @@ int init_msg()
 
 bool snd_msg(int nMsqid,char* pLine)
 {
-	msgbuf stMsg;
+	mymsgbuf stMsg;
 	stMsg.mtype = 1;
-	stMsg.mtext = (char*)malloc(strlen(pLine) + 1);
-	strcpy(stMsg.mtext,pLine);
-	int nRet = msgsnd(nMsqid,&stMsg,strlen(stMsg.mtext),IPC_NOWAIT);
+	strcpy(stMsg.szBuf,pLine);
+	int nRet = msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),IPC_NOWAIT);
 	if (-1 == nRet)
 	{
 		perror("msgsnd failed");
@@ -57,7 +56,7 @@ int main()
 		return -1;
 	while (-1 != getline(&pLine,&len,stdin))
 	{
-		if (!strcmp(pLine,"myserver q"))
+		if (strstr(pLine,"quit"))
 			break;
 		if (!snd_msg(nMsqid,pLine))
 			break;

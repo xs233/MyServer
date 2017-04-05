@@ -7,7 +7,7 @@ BIN = $(SRC:%.cpp=%)
 all:$(BIN)
 
 $(BIN):%:%.cpp $(SRC1)
-	g++ $(CFLAGS) -std=c++11 $^ -o$@
+	g++ $(CFLAGS) -std=c++11 $^ -o$@ -lpthread
 
 CFLAGS=-g -Wall
 
