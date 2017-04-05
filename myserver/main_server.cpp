@@ -1,6 +1,15 @@
 #include<unistd.h>
 #include<fcntl.h>
+#include<pthread.h>
 #include "HeaderFiles/epoll.h"
+
+
+
+void* threadMsg()
+{
+	
+	return NULL;
+}
 
 int main()
 {
@@ -22,6 +31,9 @@ int main()
 	//dup2(nFFD,STDERR_FILENO);
 
 	//FILE* fp = freopen("myserver.log","wb",stdout);
+	
+	pthread_t tid;
+	pthread_create(&tid,NULL,threadMsg,NULL);
 	CMyEpoll AAA;
 	AAA.myepoll_init();
 	AAA.myepoll_process();
