@@ -1,4 +1,5 @@
 #include<string.h>
+#include<unistd.h>
 #include "../HeaderFiles/MyUser.h"
 
 CMyUser::CMyUser()
@@ -30,7 +31,6 @@ bool CMyUser::erase(int nFd)
 		printf("unknown error and lost %d fd",nFd);
 		return false;
 	}
-	printf("Disconnect :[%s:%d]\n",inet_ntoa((it->second).sin_addr),ntohs((it->second).sin_port));
 	m_mapuser.erase(it);
 	return true;
 }
@@ -43,6 +43,16 @@ bool CMyUser::data_process(int nFd, char* pMsg)
 		printf("unknown error and lost %d fd",nFd);
 		return false;
 	}
-	printf("Recv from [%s:%d] : %s\n",inet_ntoa((it->second).sin_addr),ntohs((it->second).sin_port),pMsg);
 	return true;
+}
+
+void CMyUser::exit()
+{
+	for (std::map<int,sockaddr_in>::iterator it = m_mapuser.begin();it != m_mapuser.end();++it)
+		close(it->first);
+}
+
+int CMyUser::get_size()
+{
+	return m_mapuser.size();
 }
