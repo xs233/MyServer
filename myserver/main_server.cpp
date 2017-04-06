@@ -8,6 +8,7 @@
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/msg.h>
+#include<sys/wait.h>
 #include "HeaderFiles/epoll.h"
 
 #define FILENAME "../README.md"
@@ -15,6 +16,7 @@ typedef struct tagMsg {
 	long mtype;
 	char szBuf[100];
 }mymsgbuf;
+CMyEpoll AAA;
 
 int init_msg()
 {
@@ -74,37 +76,47 @@ void* threadMsg(void* arg)
 		}
 		printf("msgrcv:%s\n",stMsg.szBuf);
 		if (strstr(stMsg.szBuf,"myserver q"))
+		{
+			AAA.myepoll_end();				
 			return NULL;
+		}
+		/*else if (strstr(stMsg.szBuf,"myserver num"))
+		{
+		
+		}*/
 	}	
 	return NULL;
 }
 
 int main()
 {
-	/*int nFFD = open("myserver.log",O_RDWR | O_CREAT | O_TRUNC,0700);
-	if (-1 == nFFD)
+	pid_t pid1 = fork();
+	if (pid1 < 0)
 	{
-		perror("open myserver.log failed!");
+		perror("fork1 failed");
 		return -1;
 	}
-
-	if (-1 == dup2(nFFD,STDOUT_FILENO))
+	else if (0 == pid1)
 	{
-		perror("dup2 failed");
-		close(nFFD);
-		return -1;
+		pid_t pid2 = fork();
+		if (pid2 < 0)
+		{
+			perror("fork2 failed");
+			return -2;
+		}
+		else if (0 == pid2)
+		{
+			//usleep(100);
+			printf("create dameon process...\n");
+			pthread_t tid;
+			pthread_create(&tid,NULL,threadMsg,NULL);
+			AAA.myepoll_init();
+			AAA.myepoll_process();
+		}
+		wait(NULL);
+		printf("know server end:%d\n",getpid());
 	}
-	write(STDOUT_FILENO,"BBB\n",5);*/
-	//printf("AAA\n");
-	//dup2(nFFD,STDERR_FILENO);
-
-	//FILE* fp = freopen("myserver.log","wb",stdout);
-	
-	pthread_t tid;
-	pthread_create(&tid,NULL,threadMsg,NULL);
-	CMyEpoll AAA;
-	AAA.myepoll_init();
-	AAA.myepoll_process();
-	//fclose(fp);
+	wait(NULL);
+	printf("main end:%d\n",getpid());
 	return 0;
 }

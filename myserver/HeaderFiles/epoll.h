@@ -10,6 +10,7 @@ class CMyEpoll
 	static const int CONN_MAX = 10;
 	int m_nfd;	
 	int m_nepfd;
+	bool m_bNotify;
 	epoll_event m_evs[CONN_MAX];
 	CMyUser* pMyUser;	
 
@@ -20,7 +21,7 @@ public:
 	~CMyEpoll();
 	bool myepoll_init();
 	bool myepoll_process();
-	
+	void myepoll_end();
 };
 
 #endif

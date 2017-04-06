@@ -7,7 +7,7 @@
 #include"../HeaderFiles/epoll.h"
 #include"../HeaderFiles/MyUser.h"
 
-CMyEpoll::CMyEpoll() : m_nfd(0),m_nepfd(0),pMyUser(new CMyUser())
+CMyEpoll::CMyEpoll() : m_nfd(0),m_nepfd(0),m_bNotify(false),pMyUser(new CMyUser())
 {
 	memset(m_evs,'\0',CONN_MAX * sizeof(epoll_event));
 }
@@ -19,6 +19,7 @@ CMyEpoll::~CMyEpoll()
 		delete pMyUser;
 		pMyUser = nullptr;
 	}
+	close(m_nfd);
 }
 
 bool CMyEpoll::myepoll_init()
@@ -38,7 +39,6 @@ bool CMyEpoll::myepoll_init()
 	if (bind(m_nfd,(struct sockaddr*)&addr,addrlen))
 	{
 		perror("Bind failed");
-		close(m_nfd);
 		return false;
 	}
 
@@ -70,7 +70,7 @@ bool CMyEpoll::myepoll_process()
 	while(1)
 	{
 		nRet = epoll_wait(m_nepfd,m_evs,CONN_MAX,-1);
-		printf("epoll_wait return\n");
+		printf("epoll_wait return...\n");
 		if (nRet < 0)
 		{
 			perror("epoll_wait failed");
@@ -80,6 +80,13 @@ bool CMyEpoll::myepoll_process()
 		else
 		{
 			myepoll_work(nRet);
+			if (m_bNotify)
+			{
+				sleep(5);
+				pMyUser->exit();
+				printf("server exit.\n");
+				return true;
+			}
 		}
 	}
 	return true;
@@ -113,7 +120,7 @@ bool CMyEpoll::myepoll_work(int nCnt)
 		}
 		else
 		{
-			printf("client message process\n");
+			printf("client message process...\n");
 			char szRecvBuf[100] = {0};
 			int nRet = read(m_evs[i].data.fd,szRecvBuf,100);
 			if (nRet < 0)
@@ -125,12 +132,21 @@ bool CMyEpoll::myepoll_work(int nCnt)
 			{
 				pMyUser->erase(m_evs[i].data.fd);
 				epoll_ctl(m_nepfd,EPOLL_CTL_DEL,m_evs[i].data.fd,m_evs + i);
+				close(m_evs[i].data.fd);
+				printf("Disconnect : %d...\n",m_evs[i].data.fd);
 			}
 			else
 			{
+				printf("Recv data form:%d - %s...\n",m_evs[i].data.fd,szRecvBuf);
 				pMyUser->data_process(m_evs[i].data.fd,szRecvBuf);
 			}
 		}
 	}
 	return true;
+}
+
+void CMyEpoll::myepoll_end()
+{
+	printf("wait server exit...\n");
+	m_bNotify = true;
 }
