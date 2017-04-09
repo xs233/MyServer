@@ -73,6 +73,11 @@ bool CMyEpoll::myepoll_process()
 		printf("epoll_wait return...\n");
 		if (nRet < 0)
 		{
+			if (EINTR == errno)
+			{
+				printf("catch EINTR...\n");
+				return true;
+			}
 			perror("epoll_wait failed");
 			close(m_nfd);
 			return false;
@@ -82,7 +87,6 @@ bool CMyEpoll::myepoll_process()
 			myepoll_work(nRet);
 			if (m_bNotify)
 			{
-				sleep(5);
 				pMyUser->exit();
 				printf("server exit.\n");
 				return true;
@@ -149,4 +153,9 @@ void CMyEpoll::myepoll_end()
 {
 	printf("wait server exit...\n");
 	m_bNotify = true;
+}
+
+int CMyEpoll::get_user_num()
+{
+	return pMyUser->get_size();
 }

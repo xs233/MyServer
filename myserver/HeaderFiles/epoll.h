@@ -22,6 +22,7 @@ public:
 	bool myepoll_init();
 	bool myepoll_process();
 	void myepoll_end();
+	int get_user_num();
 };
 
 #endif

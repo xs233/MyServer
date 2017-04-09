@@ -44,6 +44,15 @@ bool snd_msg(int nMsqid,char* pLine)
 		perror("msgsnd failed");
 		return false;
 	}
+	stMsg.mtype = 2;
+	memset(stMsg.szBuf,'\0',100);
+	nRet = msgrcv(nMsqid,&stMsg,100,2,0);
+	if (-1 == nRet)
+	{
+		perror("msgrcv failed");
+		return false;
+	}
+	printf("rcv:%s\n",stMsg.szBuf);
 	return true;
 }
 
