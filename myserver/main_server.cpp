@@ -58,6 +58,16 @@ int init_msg()
 	return msqid;
 }
 
+bool Msgsnd(int msqid,const void* msgp,size_t msgsz,int msgflg)
+{
+	if (-1 == msgsnd(msqid,msgp,msgsz,msgflg))
+	{
+		perror("msgsnd failed");
+		return false;
+	}
+	return true;
+}
+
 void* threadMsg(void* arg)
 {
 	int nMsqid = init_msg();
@@ -77,6 +87,11 @@ void* threadMsg(void* arg)
 		printf("msgrcv:%s",stMsg.szBuf);
 		if (strstr(stMsg.szBuf,"myserver -q"))
 		{
+			stMsg.mtype = 2;
+			memset(stMsg.szBuf,'\0',100);
+			strcpy(stMsg.szBuf,"try to stop myserver...");
+			if (!Msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),0))
+				return NULL;
 			AAA.myepoll_end();				
 			return NULL;
 		}
@@ -85,7 +100,16 @@ void* threadMsg(void* arg)
 			stMsg.mtype = 2;
 			memset(stMsg.szBuf,'\0',100);
 			sprintf(stMsg.szBuf,"current user num:%d...",AAA.get_user_num());
-			msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),0);
+			if (!Msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),0))
+				return NULL;
+		}
+		else
+		{
+			stMsg.mtype = 2;
+			memset(stMsg.szBuf,'\0',100);
+			strcpy(stMsg.szBuf,"Invalid operation");
+			if (!Msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),0))
+				return NULL;
 		}
 	}	
 	return NULL;

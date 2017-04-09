@@ -87,7 +87,6 @@ bool CMyEpoll::myepoll_process()
 			myepoll_work(nRet);
 			if (m_bNotify)
 			{
-				sleep(5);
 				pMyUser->exit();
 				printf("server exit.\n");
 				return true;
