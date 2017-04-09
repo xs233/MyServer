@@ -74,16 +74,19 @@ void* threadMsg(void* arg)
 			perror("msgrcv failed");
 			return NULL;
 		}
-		printf("msgrcv:%s\n",stMsg.szBuf);
-		if (strstr(stMsg.szBuf,"myserver q"))
+		printf("msgrcv:%s",stMsg.szBuf);
+		if (strstr(stMsg.szBuf,"myserver -q"))
 		{
 			AAA.myepoll_end();				
 			return NULL;
 		}
-		/*else if (strstr(stMsg.szBuf,"myserver num"))
+		else if (strstr(stMsg.szBuf,"myserver -n"))
 		{
-		
-		}*/
+			stMsg.mtype = 2;
+			memset(stMsg.szBuf,'\0',100);
+			sprintf(stMsg.szBuf,"current user num:%d...",AAA.get_user_num());
+			msgsnd(nMsqid,&stMsg,strlen(stMsg.szBuf),0);
+		}
 	}	
 	return NULL;
 }
