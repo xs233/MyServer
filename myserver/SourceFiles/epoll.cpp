@@ -4,8 +4,8 @@
 #include<arpa/inet.h>
 #include<unistd.h>
 #include<string.h>
-#include"../HeaderFiles/epoll.h"
-#include"../HeaderFiles/MyUser.h"
+#include"epoll.h"
+#include"MyUser.h"
 
 CMyEpoll::CMyEpoll() : m_nfd(0),m_nepfd(0),m_bNotify(false),pMyUser(new CMyUser())
 {

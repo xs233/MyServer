@@ -9,7 +9,7 @@
 #include<sys/ipc.h>
 #include<sys/msg.h>
 #include<sys/wait.h>
-#include "HeaderFiles/epoll.h"
+#include "epoll.h"
 
 #define FILENAME "../README.md"
 typedef struct tagMsg {

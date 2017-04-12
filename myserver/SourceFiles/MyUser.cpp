@@ -1,6 +1,7 @@
 #include<string.h>
 #include<unistd.h>
-#include "../HeaderFiles/MyUser.h"
+#include "MyUser.h"
+#include "json/json.h"
 
 CMyUser::CMyUser()
 {
@@ -42,6 +43,12 @@ bool CMyUser::data_process(int nFd, char* pMsg)
 	{
 		printf("unknown error and lost %d fd",nFd);
 		return false;
+	}
+	Json::Reader reader;
+	Json::Value root;
+	if (!reader.parse(pMsg,root))
+	{
+		printf("It's not a Json!\n");
 	}
 	return true;
 }
