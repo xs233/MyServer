@@ -1,4 +1,3 @@
-#include<pthread.h>
 
 typedef struct workMsg{
 	int nFd;
@@ -7,10 +6,11 @@ typedef struct workMsg{
 
 class CMyThreadPool
 {
-
+	void* threadWorker(void* arg);
 public:
 	CMyThreadPool();
 	~CMyThreadPool();
 	bool threadpool_init(int nMaxthread,int nMaxWait);
 	bool threadpool_add(WorkMsg* pMsg);
+
 };
